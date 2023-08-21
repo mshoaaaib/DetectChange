@@ -10,32 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout FlowTest repository
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          repository: mshoaaaib/FlowTest
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '14' # You can change this to the version you want
 
-      - name: Install dependencies
-        run: npm install axios
-
-      - name: Check for Changes
-        id: check_changes
+      - name: Check Diff
+        id: diff
         run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || echo "no_changes")
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          git fetch origin main  # Fetch the latest changes from the main branch
+          DIFF=$(git diff --name-only origin/main ${{ github.sha }})
+          echo "Changed files: $DIFF"
+          echo "::set-output name=diff::$DIFF"
 
-      - name: Run api.js if Changes
+      - name: Run api.js
         run: |
-          if [[ "${{ env.CHANGED_FILES }}" != "no_changes" ]]; then
-            TICKET_NUMBER=$INPUT_TICKET_NUMBER
-            node file.js "$TICKET_NUMBER"
-          else
-            echo "No changes in the specified file."
+          CHANGED_FILES=$diff
+          if [ -n "$CHANGED_FILES" ]; then
+            TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
+            node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
           fi
         env:
-          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}
+          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
