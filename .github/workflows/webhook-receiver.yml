@@ -14,7 +14,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: mshoaaaib/FlowTest
-          path:   # Path to the directory where the repository will be checked out
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
