@@ -33,7 +33,7 @@ jobs:
         run: |
           if [[ "${{ env.CHANGED_FILES }}" != "no_changes" ]]; then
             TICKET_NUMBER=$INPUT_TICKET_NUMBER
-            node FileTest/file.js "$TICKET_NUMBER"
+            node file.js "$TICKET_NUMBER"
           else
             echo "No changes in the specified file."
           fi
