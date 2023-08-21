@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Checkout FileTest repository
         uses: actions/checkout@v2
+        with:
+          repository: your-username/FileTest  # Replace with the actual repository URL
+          path: FileTest  # Path to the directory where the repository will be checked out
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -21,9 +24,21 @@ jobs:
       - name: Install dependencies
         run: npm install axios
 
-      - name: Run api.js
+      - name: Check for Changes
+        id: check_changes
         run: |
-          TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
-          node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
+          CHANGED_FILES=$(git -C FileTest diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || true)
+          echo "Changed files: $CHANGED_FILES"
+          echo "::set-output name=files::$CHANGED_FILES"
+
+      - name: Run api.js if Changes
+        run: |
+          CHANGED_FILES="${{ steps.check_changes.outputs.files }}"
+          if [[ -n $CHANGED_FILES ]]; then
+            TICKET_NUMBER=$INPUT_TICKET_NUMBER
+            node FileTest/file.js "$TICKET_NUMBER"
+          else
+            echo "No changes in the specified file."
+          fi
         env:
-          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
+          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}
