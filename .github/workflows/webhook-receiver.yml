@@ -13,7 +13,7 @@ jobs:
       - name: Checkout FileTest repository
         uses: actions/checkout@v2
         with:
-          repository: mshoaaaib/FlowTest  # Replace with the actual repository URL
+          repository: mshoaaaib/FlowTest
           path: FileTest  # Path to the directory where the repository will be checked out
 
       - name: Set up Node.js
@@ -28,12 +28,11 @@ jobs:
         id: check_changes
         run: |
           CHANGED_FILES=$(git -C FileTest diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || true)
-          echo "Changed files: $CHANGED_FILES"
-          echo "::set-output name=files::$CHANGED_FILES"
+          echo "Changed files: $CHANGED_FILES" >> $GITHUB_ENV
 
       - name: Run api.js if Changes
         run: |
-          CHANGED_FILES="${{ steps.check_changes.outputs.files }}"
+          CHANGED_FILES="${{ env.CHANGED_FILES }}"
           if [[ -n $CHANGED_FILES ]]; then
             TICKET_NUMBER=$INPUT_TICKET_NUMBER
             node FileTest/file.js "$TICKET_NUMBER"
