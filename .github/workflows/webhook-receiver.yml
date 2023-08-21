@@ -27,13 +27,12 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          CHANGED_FILES=$(git -C FileTest diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || true)
-          echo "Changed files: $CHANGED_FILES" >> $GITHUB_ENV
+          CHANGED_FILES=$(git -C FileTest diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || echo "no_changes")
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
       - name: Run api.js if Changes
         run: |
-          CHANGED_FILES="${{ env.CHANGED_FILES }}"
-          if [[ -n $CHANGED_FILES ]]; then
+          if [[ "${{ env.CHANGED_FILES }}" != "no_changes" ]]; then
             TICKET_NUMBER=$INPUT_TICKET_NUMBER
             node FileTest/file.js "$TICKET_NUMBER"
           else
