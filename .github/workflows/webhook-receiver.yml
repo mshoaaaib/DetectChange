@@ -23,11 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm install axios
 
-      - name: Check for Changes
-        id: check_changes
-        run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || echo "no_changes")
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+       - name: Check for Changes
+         id: check_changes
+         run: |
+         CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'file.js' || echo "no_changes")
+         echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
       - name: Run api.js if Changes
         run: |
