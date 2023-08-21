@@ -13,7 +13,7 @@ jobs:
       - name: Checkout FileTest repository
         uses: actions/checkout@v2
         with:
-          repository: your-username/FileTest  # Replace with the actual repository URL
+          repository: mshoaaaib/FlowTest  # Replace with the actual repository URL
           path: FileTest  # Path to the directory where the repository will be checked out
 
       - name: Set up Node.js
