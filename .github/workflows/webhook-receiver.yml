@@ -18,20 +18,21 @@ jobs:
         with:
           node-version: '14' # You can change this to the version you want
 
-      - name: Check Diff
-        id: diff
-        run: |
-          git fetch origin main  # Fetch the latest changes from the main branch
-          DIFF=$(git diff --name-only origin/main ${{ github.sha }})
-          echo "Changed files: $DIFF"
-          echo "::set-output name=diff::$DIFF"
+      - name: Install dependencies
+        run: npm install axios
 
-      - name: Run api.js
+      - name: Run changed.js and check for changes
+        run: node changed.js
+        id: check_changes
+        continue-on-error: true  # Continue to the next step even if this step fails
+
+      - name: Run api.js if changes are detected
         run: |
-          CHANGED_FILES=$diff
-          if [ -n "$CHANGED_FILES" ]; then
+          if [ ${{ steps.check_changes.outputs.change_status }} -eq 1 ]; then
             TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
             node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
+          else
+            echo "No changes detected. Skipping api.js."
           fi
         env:
           INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
