@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types:
       - jira.issue_transitioned
+  push:
+    branches:
+      - main
+      - '2'
 
 jobs:
   run_api_js:
