@@ -1,7 +1,6 @@
+name: Run On Issue Transition
+
 on:
-  pull_request:
-    paths:
-      - 'FlowTest/file.js'
   repository_dispatch:
     types:
       - jira.issue_transitioned
@@ -22,20 +21,16 @@ jobs:
       - name: Install dependencies
         run: npm install axios
 
-      - name: Check for changes in file.js
+      - name: Check for changes
+        id: detect_changes
         run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          echo "$CHANGED_FILES"
-          if echo "$CHANGED_FILES" | grep -q 'FlowTest/file.js'; then
-            echo "Changes detected in FlowTest/file.js"
-          else
-            echo "No changes in FlowTest/file.js. Exiting..."
-            exit 0
-          fi
-
-      - name: Run api.js
+          CHANGES=$(node detect_changes.js)
+          echo "::set-output name=changes::$CHANGES"
+          
+      - name: Run api.js if changes detected
+        if: steps.detect_changes.outputs.changes == '1'
         run: |
-          TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
-          node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
+          TICKET_NUMBER=$INPUT_TICKET_NUMBER
+          node api.js "$TICKET_NUMBER"
         env:
-          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
+          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}
