@@ -1,16 +1,16 @@
-name: JIRA Transition Update
+name: Run On Issue Transition
 
 on:
   repository_dispatch:
     types:
-      - jira.issue_transition
+      - jira.issue_transitioned
 
 jobs:
-  updateJiraCustomField:
+  run_api_js:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Update JIRA Custom Field
