@@ -29,11 +29,22 @@ jobs:
           NEW_CUSTOM_FIELD_VALUE="New Value"  # Replace with the new value you want to set
 
           # Construct the JIRA API endpoint URL
-          JIRA_API_URL="https://testjiragitautomation.atlassian.net/rest/api/3/issue/"+${TICKET_NUMBER}
+          JIRA_API_URL="https://testjiragitautomation.atlassian.net/rest/api/3/issue/${TICKET_NUMBER}"
 
-          # Update the custom field value using JIRA API
-          curl -D- -u "muhammadshoaibajk@gmail.com:ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8" -X PUT -H "Content-Type: application/json" --data '{
+          # Prepare the JSON payload
+          JSON_PAYLOAD='{
             "fields": {
               "'${CUSTOM_FIELD_ID}'": "'${NEW_CUSTOM_FIELD_VALUE}'"
             }
-          }' "${JIRA_API_URL}"
+          }'
+
+          # Make API request to update the custom field value using axios (Node.js)
+          npx axios.put("${JIRA_API_URL}", ${JSON_PAYLOAD}, {
+            auth: {
+              username: "muhammadshoaibajk@gmail.com", // Replace with your JIRA email
+              password: "ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8" // Replace with your JIRA API token
+            },
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
