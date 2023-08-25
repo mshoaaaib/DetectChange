@@ -16,8 +16,8 @@ jobs:
       - name: Update JIRA Custom Field
         env:
           JIRA_BASE_URL: 'https://testjiragitautomation.atlassian.net'
-          JIRA_USERNAME: ${{ muhammadshoaibajk@gmail.com }}
-          JIRA_TOKEN: ${{ ATATT3xFfGF0YxvyEEFeezKjbfe1Zhn8IVrCBFkGTH8TTjMqRa89nYRPV6Kif8Ep5it1MK_e6Jka9_BnyGvbssiuv04ur9zwie_KXmsB6ijtE7_hvU-8uF52ePZW7VHyVHNgdgx0gvdFu31FHQFF8OjYpz9v4AiXUKhIFPy806HN-kR6g3wamLU=57C12695}}
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_TOKEN: ${{secrets.JIRA_TOKEN}}
           ISSUE_KEY: ${{ github.event.client_payload.issue_key }} # Update this if needed
           CUSTOM_FIELD_ID: 10037
         run: |
