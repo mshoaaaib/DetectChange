@@ -47,4 +47,4 @@ jobs:
             headers: {
               "Content-Type": "application/json"
             }
-          })
+          }
