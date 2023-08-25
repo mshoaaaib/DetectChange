@@ -22,7 +22,7 @@ jobs:
       - name: Update Custom Field in Jira
         run: |
           TICKET_NUMBER=$INPUT_TICKET_NUMBER
-          API_URL="https://testjiragitautomation.atlassian.net/rest/api/2/issue/{{TICKET_NUMBER}}"
+          API_URL="https://testjiragitautomation.atlassian.net/rest/api/2/issue/SCRUM-17"
 
           AUTH_HEADER="Authorization: Basic ${{ secrets.JIRA_TOKEN }}"
           CUSTOM_FIELD_ID="customfield_10037"
