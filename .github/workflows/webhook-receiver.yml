@@ -24,7 +24,7 @@ jobs:
                 "customfield_10037": "yes bainchod kaam kar rha hun"
               }
             }' -H "Content-Type: application/json" \
-            https://testjiragitautomation.atlassian.net/rest/api/2/issue/${ticket_id}
+            https://testjiragitautomation.atlassian.net/rest/api/2/issue/SCRUM-17
         env:
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
