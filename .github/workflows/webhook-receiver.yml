@@ -1,4 +1,4 @@
-name: Run On Issue Transition
+name: Update JIRA Custom Field
 
 on:
   repository_dispatch:
@@ -6,7 +6,7 @@ on:
       - jira.issue_transitioned
 
 jobs:
-  run_api_js:
+  update_custom_field:
     runs-on: ubuntu-latest
     
     steps:
@@ -21,44 +21,19 @@ jobs:
       - name: Install dependencies
         run: npm install axios
 
-      - name: Run api.js
+      - name: Update JIRA Custom Field
         run: |
-          TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
-          node - <<EOF
-            const axios = require('axios');
-            
-            // Accept the ticket number as a command-line argument
-            const Ticket_NO = process.argv[2];
-            
-            if (!Ticket_NO) {
-              console.error('Error: Ticket number not provided.');
-              process.exit(1);
+          # Extract necessary information from the event payload
+          TICKET_NUMBER="${{ github.event.client_payload.ticket_number }}"
+          CUSTOM_FIELD_ID="customfield_10037" # Replace with your custom field ID
+          NEW_CUSTOM_FIELD_VALUE="New Value"  # Replace with the new value you want to set
+
+          # Construct the JIRA API endpoint URL
+          JIRA_API_URL="https://testjiragitautomation.atlassian.net/rest/api/3/issue/"+${TICKET_NUMBER}
+
+          # Update the custom field value using JIRA API
+          curl -D- -u "muhammadshoaibajk@gmail.com:ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8" -X PUT -H "Content-Type: application/json" --data '{
+            "fields": {
+              "'${CUSTOM_FIELD_ID}'": "'${NEW_CUSTOM_FIELD_VALUE}'"
             }
-            
-            const url = 'https://testjiragitautomation.atlassian.net/rest/api/3/issue/' + Ticket_NO;
-            const auth = {
-              username: 'muhammadshoaibajk@gmail.com',
-              password: 'ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8'
-            };
-            
-            const requestBody = {
-              update: {
-                customfield_10037: [
-                  {
-                    set: 'Ticket Flagged Successfully'
-                  }
-                ]
-              }
-            };
-            
-            axios
-              .put(url, requestBody, { auth })
-              .then(response => {
-                console.log('Response:', response.status);
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
-            EOF
-          env:
-            INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}
+          }' "${JIRA_API_URL}"
