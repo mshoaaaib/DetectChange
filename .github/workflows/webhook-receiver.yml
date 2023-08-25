@@ -1,27 +1,36 @@
-name: Update JIRA Custom Field
-
 on:
   repository_dispatch:
     types:
       - jira.issue_transitioned
 
 jobs:
-  update-jira-field:
+  run_curl_request:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Update JIRA Custom Field
-        run: |
-          curl -X PUT \
-               -H "Content-Type: application/json" \
-               -H "Authorization: Basic ${{ secrets.JIRA_TOKEN }}" \
-               -d '{
-                 "fields": {
-                   "customfield_10037": "updated"
-                 }
-               }' \
-               https://testjiragitautomation.atlassian.net/rest/api/3/issue/${{ github.event.client_payload.issue_id }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # You can change this to the version you want
 
+      - name: Install cURL
+        run: sudo apt-get update && sudo apt-get -y install curl
+
+      - name: Update Custom Field in Jira
+        run: |
+          TICKET_NUMBER=$INPUT_TICKET_NUMBER
+          API_URL="https://your-jira-instance/rest/api/2/issue/${TICKET_NUMBER}"
+          AUTH_HEADER="Authorization: Basic ${{ secrets.YOUR_SECRET_NAME }}"
+          CUSTOM_FIELD_ID="customfield_10037"
+          NEW_FIELD_VALUE="New Value"
+
+          curl -X PUT -H "$AUTH_HEADER" -H "Content-Type: application/json" -d '{
+            "fields": {
+              "'$CUSTOM_FIELD_ID'": "'$NEW_FIELD_VALUE'"
+            }
+          }' "$API_URL"
+        env:
+          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}
