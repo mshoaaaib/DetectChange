@@ -22,7 +22,7 @@ jobs:
           CUSTOM_FIELD_ID: 10037
         run: |
           # Extract ticket number from issue key
-          ticket_number=$(echo "$ISSUE_KEY" | grep -oP '[A-Z]+-\d+')
+          ticket_number=$INPUT_TICKET_NUMBER
 
           # Update custom field in JIRA using REST API
           curl -X PUT \
