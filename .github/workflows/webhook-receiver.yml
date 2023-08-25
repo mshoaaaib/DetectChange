@@ -29,11 +29,6 @@ jobs:
 
           const Ticket_NO = process.env.TICKET_NUMBER;
 
-          if (!Ticket_NO) {
-            console.error("Error: Ticket number not provided.");
-            process.exit(1);
-          }
-
           const url = "https://testjiragitautomation.atlassian.net/rest/api/3/issue/" + Ticket_NO;
           const auth = {
             username: "muhammadshoaibajk@gmail.com",
