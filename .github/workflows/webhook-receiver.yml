@@ -17,12 +17,13 @@ jobs:
         env:
           JIRA_BASE_URL: 'https://testjiragitautomation.atlassian.net'
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
-          JIRA_TOKEN: ${{secrets.JIRA_TOKEN}}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
           ISSUE_KEY: ${{ github.event.client_payload.issue_key }} # Update this if needed
           CUSTOM_FIELD_ID: 10037
+          TICKET_FLAGGED_MESSAGE: "Ticket flagged successfully" # Add the message here
         run: |
           # Extract ticket number from issue key
-          ticket_number=$INPUT_TICKET_NUMBER
+          ticket_number=${ISSUE_KEY##*-}
 
           # Update custom field in JIRA using REST API
           curl -X PUT \
@@ -30,7 +31,7 @@ jobs:
             -u "${JIRA_USERNAME}:${JIRA_TOKEN}" \
             -d '{
               "fields": {
-                "customfield_'"$CUSTOM_FIELD_ID"'": "'"$ticket_number"'"
+                "customfield_'"$CUSTOM_FIELD_ID"'": "'"$TICKET_FLAGGED_MESSAGE"'"
               }
             }' \
             "${JIRA_BASE_URL}/rest/api/2/issue/${ticket_number}"
