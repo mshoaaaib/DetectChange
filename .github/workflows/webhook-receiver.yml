@@ -1,4 +1,4 @@
-name: Run On Issue Transition
+name: Update JIRA Custom Field
 
 on:
   repository_dispatch:
@@ -6,32 +6,22 @@ on:
       - jira.issue_transitioned
 
 jobs:
-  run_api_js:
+  update-jira-field:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Update JIRA Custom Field
-        env:
-          JIRA_BASE_URL: 'https://testjiragitautomation.atlassian.net'
-          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
-          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-          ISSUE_KEY: ${{ github.event.client_payload.issue_key }} # Update this if needed
-          CUSTOM_FIELD_ID: 10037
-          TICKET_FLAGGED_MESSAGE: "Ticket flagged successfully" # Add the message here
         run: |
-          # Extract ticket number from issue key
-          ticket_number=${ISSUE_KEY##*-}
-
-          # Update custom field in JIRA using REST API
           curl -X PUT \
-            -H "Content-Type: application/json" \
-            -u "${JIRA_USERNAME}:${JIRA_TOKEN}" \
-            -d '{
-              "fields": {
-                "customfield_'"$CUSTOM_FIELD_ID"'": "'"$TICKET_FLAGGED_MESSAGE"'"
-              }
-            }' \
-            "${JIRA_BASE_URL}/rest/api/2/issue/${ticket_number}"
+               -H "Content-Type: application/json" \
+               -H "Authorization: Basic ${{ secrets.JIRA_TOKEN }}" \
+               -d '{
+                 "fields": {
+                   "customfield_10037": "updated"
+                 }
+               }' \
+               https://testjiragitautomation.atlassian.net/rest/api/3/issue/${{ github.event.client_payload.issue_id }}
+
