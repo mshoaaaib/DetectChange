@@ -3,7 +3,7 @@ name: JIRA Transition Update
 on:
   repository_dispatch:
     types:
-      - jira_issue_transition
+      - jira.issue_transition
 
 jobs:
   updateJiraCustomField:
