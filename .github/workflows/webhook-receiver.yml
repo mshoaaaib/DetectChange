@@ -19,9 +19,9 @@ jobs:
           node-version: '14' # You can change this to the version you want
 
       - name: Run api.js
-        run: |
+        run: 
 
-          JIRA_USERNAME="63930e063e79f12e57260a98"
+          JIRA_USERNAME="muhammadshoaibajk@gmail.com"
           JIRA_API_TOKEN="ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8"
           TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
 
