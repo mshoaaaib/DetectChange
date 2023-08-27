@@ -9,6 +9,10 @@ jobs:
   update_custom_field:
     runs-on: ubuntu-latest
     steps:
+      
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Get ticket number
         uses: actions/github-script@v3
         with:
