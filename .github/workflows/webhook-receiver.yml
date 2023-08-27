@@ -2,8 +2,7 @@ name: Jira Ticket Transition
 
 on:
   issue_transition:
-    types: 
-      - jira.issue_transitioned
+    types: [opened, closed]
 
 jobs:
   update_custom_field:
