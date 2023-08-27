@@ -18,12 +18,23 @@ jobs:
         with:
           node-version: '14' # You can change this to the version you want
 
-      - name: Install dependencies
-        run: npm install axios
-
       - name: Run api.js
         run: |
+
+          JIRA_USERNAME="muhammadshoaibajk@gmail.com"
+          JIRA_API_TOKEN="ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8"
           TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
-          node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
+
+          TRANSITION_NAME="READY FOR QA"
+
+           JIRA_URL="https://testjiragitautomation.atlassian.net"
+          API_ENDPOINT="/rest/api/2/issue/${TICKET_NUMBER}/transitions"
+
+           TRANSITION_JSON=$(curl -s -u ${JIRA_USERNAME}:${JIRA_API_TOKEN} -X GET ${JIRA_URL}${API_ENDPOINT})
+          TRANSITION_ID=$(echo $TRANSITION_JSON | jq -r ".transitions[] | select(.name == \"${TRANSITION_NAME}\") | .id")
+
+           CURL_CMD="curl -X POST -H 'Content-Type: application/json' -u ${JIRA_USERNAME}:${JIRA_API_TOKEN} -d '{\"transition\": {\"id\": \"${TRANSITION_ID}\"}}' ${JIRA_URL}${API_ENDPOINT}"
+
+          eval $CURL_CMD
         env:
           INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
