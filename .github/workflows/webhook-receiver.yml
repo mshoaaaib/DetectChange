@@ -1,4 +1,4 @@
-name: Jira Ticket Transition
+name: Run On Issue Transition
 
 on:
   repository_dispatch:
@@ -6,29 +6,24 @@ on:
       - jira.issue_transitioned
 
 jobs:
-  update_custom_field:
+  run_api_js:
     runs-on: ubuntu-latest
+    
     steps:
-      
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get ticket number
-        uses: actions/github-script@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          script: |
-            const ticketNumber = context.payload.issue.key;
-            print(ticketNumber);
+          node-version: '14' # You can change this to the version you want
 
-      - name: Get custom field value
-        uses: jira-get-custom-field-value@v1
-        with:
-          issue: ${{ ticketNumber }}
-          customFieldId: 10037
+      - name: Install dependencies
+        run: npm install axios
 
-      - name: Update custom field value
-        uses: jira-update-custom-field-value@v1
-        with:
-          issue: ${{ ticketNumber }}
-          customFieldId: 10037
-          value: ${{ steps.get_custom_field_value.outputs.value }}
+      - name: Run api.js
+        run: |
+          TICKET_NUMBER=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
+          node api.js "$TICKET_NUMBER"       # Pass the ticket number as an argument to api.js
+        env:
+          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
