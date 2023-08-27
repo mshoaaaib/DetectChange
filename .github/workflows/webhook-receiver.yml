@@ -1,8 +1,9 @@
 name: Jira Ticket Transition
 
 on:
-  issue_transition:
-    types: [opened, closed]
+  repository_dispatch:
+    types:
+      - jira.issue_transitioned
 
 jobs:
   update_custom_field:
