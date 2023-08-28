@@ -19,8 +19,7 @@ jobs:
           issueKey=${{ github.event.client_payload.issueKey }}
           
           # Your JIRA API URL
-          jiraUrl="https://gittest.atlassian.net/rest/api/3/issue/TEST-2"
-         # jiraUrl="https://gittest.atlassian.net/rest/api/3/issue/${issueKey}"
+          jiraUrl="https://gittest.atlassian.net/rest/api/3/issue/${issueKey}"
           
           # Your JIRA Custom Field ID
           customFieldId="customfield_10044"
