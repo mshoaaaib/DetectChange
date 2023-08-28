@@ -1,39 +1,21 @@
-name: Update Custom Field
+name: JIRA Issue Transition
 
 on:
   repository_dispatch:
     types:
-      - jira.issue_transitioned
+      - jira_issue_transition
 
 jobs:
-  update_custom_field:
+  process-jira-event:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout repository
+      - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14' # You can change this to the version you want
-
-      - name: Install dependencies
-        run: npm install axios
-
-      - name: Update Custom Field
+      - name: Process JIRA Issue Transition
         run: |
-          # Extract ticket number from the event payload
-          TICKET_NUMBER=${{ github.event.client_payload.ticket_number }}
-          
-          # Jira credentials
-          JIRA_USERNAME="muhammadshoaibajk@gmail.com"
-          JIRA_PASSWORD="ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8"
-          
-          # Perform API call to update custom field
-          API_URL="https://testjiragitautomation.atlassian.net/rest/api/3/issue/${TICKET_NUMBER}"
-          AUTH_HEADER="Authorization: Basic $(echo -n "$JIRA_USERNAME:$JIRA_PASSWORD" | base64)"
-          DATA='{"fields": {"customfield_10037": "updated"}}'  # Update customfield_10037 with your custom field ID
-          
-          # Send PUT request to update custom field
-          curl --http1.1 -X PUT -H "$AUTH_HEADER" -H "Content-Type: application/json" -d "$DATA" "$API_URL"
+          # Extract issueKey from the payload
+          issueKey=${{ github.event.client_payload.issueKey }}
+
+          # Perform actions based on the issueKey
