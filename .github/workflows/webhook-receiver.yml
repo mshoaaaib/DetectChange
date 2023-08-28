@@ -28,7 +28,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           
           # JIRA API token or password
-          jiraToken="ATATT3xFfGF08tGy14pB7aE8GtFXaNCyWOrzt_3nqIbSyykC0Upa8Pz1EfYDwY9tzLQ-sp_gVbswQAY6mJI11DcSPDCJwjECnaD0zvBeNXtP6WKcbIatISEDCpVYcImhi1_H6yzJ_5ffQ-SAk3-IeahXN2GfKYpOrMHzIebngBbu6y-tQRvgHKg=BD75EEC9"
+          jiraToken="secrets.JIRA_API_TOKEN"
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
