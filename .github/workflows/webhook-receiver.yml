@@ -1,4 +1,4 @@
-name: Run On Issue Transition
+name: Update Custom Field
 
 on:
   repository_dispatch:
@@ -6,7 +6,7 @@ on:
       - jira.issue_transitioned
 
 jobs:
-  run_api_js:
+  update_custom_field:
     runs-on: ubuntu-latest
     
     steps:
@@ -21,53 +21,19 @@ jobs:
       - name: Install dependencies
         run: npm install axios
 
-      - name: Run api.js
+      - name: Update Custom Field
         run: |
-
-      - name: "Import required libraries"
-        script: |
-            const axios = require('axios');
-             Ticket_NO=$INPUT_TICKET_NUMBER  # Get the ticket number from the input
-
-             if (!Ticket_NO) {
-                console.error('Error: Ticket number not provided.');
-                process.exit(1);
-              }
-              
-       - name: "Define API URL"
-           script: |
-              const url = 'https://testjiragitautomation.atlassian.net/rest/api/3/issue/' + Ticket_NO;
-
-        - name: "Define authentication credentials"
-            script: |
-              const auth = {
-                username: 'muhammadshoaibajk@gmail.com',
-                password: 'ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8'
-    };
-
-      - name: "Define request body"
-            script: |
-              const requestBody = {
-                update: {
-                    customfield_10037: [
-                        {
-                        set: 'Ticket Flagged Successfully'
-                            }    
-                          ]
-                      }
-                    };
-
-        - name: "Make API call"
-            script: |
-              axios
-                .put(url, requestBody, { auth })
-                .then(response => {
-                    console.log('Response:', response.status);
-              })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-
-
-        env:
-          INPUT_TICKET_NUMBER: ${{ github.event.client_payload.ticket_number }}  # Extract the ticket number from the event payload
+          # Extract ticket number from the event payload
+          TICKET_NUMBER=${{ github.event.client_payload.ticket_number }}
+          
+          # Jira credentials
+          JIRA_USERNAME="muhammadshoaibajk@gmail.com"
+          JIRA_PASSWORD="ATATT3xFfGF0MsZE1cirJxVkX1B0dSskqdEvUJG0ZeV6PQBxzC7sg22e0rEc_jeaasfMAgoy4gkhYYZ0F8blgp2rKPUD8JUBWZtwwAy5Ihf1Iu-ish7zcggpoJFWisf7IFgkmh3-byFlP7YLWQZYFim1SycJ6fERYj7RWwROn3n8N1hTFeenJ5E=CAA656F8"
+          
+          # Perform API call to update custom field
+          API_URL="https://testjiragitautomation.atlassian.net/rest/api/2/issue/${TICKET_NUMBER}"
+          AUTH_HEADER="Authorization: Basic $(echo -n "$JIRA_USERNAME:$JIRA_PASSWORD" | base64)"
+          DATA='{"fields": {"customfield_10037": "updated"}}'  # Update customfield_10037 with your custom field ID
+          
+          # Send PUT request to update custom field
+          curl -X PUT -H "$AUTH_HEADER" -H "Content-Type: application/json" -d "$DATA" "$API_URL"
