@@ -1,5 +1,3 @@
-name: JIRA Issue Transition
-
 on:
   repository_dispatch:
     types:
@@ -13,22 +11,23 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Load JIRA credentials
+        run: echo "::set-output name=jiraCreds::$(node jira-config.js)"
+
       - name: Update JIRA Custom Field
         run: |
+          jiraCreds=$(echo "${{ steps.load-jira-creds.outputs.jiraCreds }}")
+          jiraUsername=$(echo "${jiraCreds}" | jq -r '.jiraUsername')
+          jiraToken=$(echo "${jiraCreds}" | jq -r '.jiraToken')
+          
           # Extract issueKey from the payload
-          issueKey=${{ github.event.client_payload.issueKey }}
+          issueKey="${{ github.event.client_payload.issueKey }}"
           
           # Your JIRA API URL
           jiraUrl="https://gittest.atlassian.net/rest/api/3/issue/${issueKey}"
           
           # Your JIRA Custom Field ID
           customFieldId="customfield_10044"
-          
-          # JIRA username (email)
-          jiraUsername="shoaib40ce@gmail.com"
-          
-          # JIRA API token or password
-          jiraToken=${{secrets.JIRA_API}}
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
