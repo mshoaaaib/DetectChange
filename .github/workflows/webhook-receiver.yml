@@ -25,7 +25,9 @@ jobs:
 
       - name: Compare check.js between branches
         run: |
-          CHANGED_FILES=$(git diff main 2 change.js)
+          git fetch origin $MAIN_BRANCH
+          git fetch origin $CURRENT_BRANCH
+          CHANGED_FILES=$(git diff main..HEAD -- change.js)
 
       - name: Update JIRA Custom Field
         if: ${{ steps.compare-branches.outputs.CHANGED_FILES != '' }}
