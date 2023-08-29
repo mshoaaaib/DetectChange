@@ -21,7 +21,7 @@ jobs:
       - name: Compare branches
         run: |
           git fetch origin $MAIN_BRANCH
-          CHANGED_FILES=$(git diff --name-only $MAIN_BRANCH..$CURRENT_BRANCH)
+          CHANGED_FILES=$(git diff --name-only origin/$MAIN_BRANCH..origin/$CURRENT_BRANCH)
 
       - name: Update JIRA Custom Field
         if: ${{ steps.compare-branches.outputs.CHANGED_FILES != '' }}
