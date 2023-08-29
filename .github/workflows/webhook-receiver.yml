@@ -29,7 +29,6 @@ jobs:
           
           # JIRA API token or password
           jiraToken=${{secrets.JIRA_API}}
-          echo "My jira token is ${{jiraToken}}"
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
