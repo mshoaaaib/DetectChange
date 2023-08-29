@@ -4,9 +4,6 @@ on:
   repository_dispatch:
     types:
       - jira_issue_transition
-      
-permissions:
-  contents: write
 
 jobs:
   process-jira-event:
@@ -15,21 +12,19 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        with:
-         fetch-depth: 5
 
-      - name: Get branch differences
-        id: branch-diff
+      - name: Get branch names
         run: |
-          # Get the branch name
-          currentBranch=$(git branch --show-current)
-          
-          # Check for differences between the pre-master branch and the 2 branch
-          diff=$(git diff --name-only main--2 )
-          echo "::set-output name=diff::$diff"
+          MAIN_BRANCH="main"
+          CURRENT_BRANCH="2"
 
-      - name: Check differences and update JIRA
-        if: steps.branch-diff.outputs.diff != ''
+      - name: Compare branches
+        run: |
+          git fetch origin $MAIN_BRANCH
+          CHANGED_FILES=$(git diff --name-only $MAIN_BRANCH..$CURRENT_BRANCH)
+
+      - name: Update JIRA Custom Field
+        if: ${{ steps.compare-branches.outputs.CHANGED_FILES != '' }}
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
