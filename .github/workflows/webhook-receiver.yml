@@ -25,7 +25,7 @@ jobs:
           currentBranch=$(git branch --show-current)
           
           # Check for differences between the pre-master branch and the 2 branch
-          diff=$(git diff --name-only main 2 )
+          diff=$(git diff --name-only main...2 )
           echo "::set-output name=diff::$diff"
 
       - name: Check differences and update JIRA
