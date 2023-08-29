@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types:
       - jira_issue_transition
+      
+permissions:
+  contents: write
 
 jobs:
   process-jira-event:
