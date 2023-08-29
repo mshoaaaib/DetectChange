@@ -13,7 +13,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Update JIRA Custom Field
+      - name: Get branch differences
+        id: branch-diff
+        run: |
+          # Get the branch name
+          currentBranch=$(git branch --show-current)
+          
+          # Check for differences between the pre-master branch and the 2 branch
+          diff=$(git diff --name-only main...2 -- change.js)
+          echo "::set-output name=diff::$diff"
+
+      - name: Check differences and update JIRA
+        if: steps.branch-diff.outputs.diff != ''
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
@@ -28,7 +39,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           
           # JIRA API token or password
-          jiraToken=${{secrets.JIRA_API}}
+          jiraToken=${{ secrets.JIRA_API }}
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
