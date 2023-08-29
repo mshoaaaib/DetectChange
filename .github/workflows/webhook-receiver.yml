@@ -28,7 +28,7 @@ jobs:
       - name: Compare check.js between branches
         id: compare-branches
         run: |
-          CHANGED_FILES=$(git diff $MAIN_BRANCH..$CURRENT_BRANCH -- check.js)
+          CHANGED_FILES=$(git diff $MAIN_BRANCH $CURRENT_BRANCH -- check.js)
           echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
 
       - name: Update JIRA Custom Field
