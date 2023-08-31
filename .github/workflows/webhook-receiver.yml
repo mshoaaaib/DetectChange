@@ -12,29 +12,16 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        
 
-      - name: Get branch names
+      - name: Get changed files
+        id: get_changes
         run: |
-          MAIN_BRANCH="main"
-          CURRENT_BRANCH="test"
-          echo "MAIN_BRANCH=${MAIN_BRANCH}" >> $GITHUB_ENV
-          echo "CURRENT_BRANCH=${CURRENT_BRANCH}" >> $GITHUB_ENV
-
-      - name: Fetch branches
-        run: |
-          git fetch origin $MAIN_BRANCH
-          git pull origin $CURRENT_BRANCH
-
-      - name: Compare check.js between branches
-        id: compare-branches
-        run: |
-          git checkout $CURRENT_BRANCH
-          CHANGED_FILES=$(git diff HEAD)
-          echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
+          git fetch origin main
+          changed_files=$(git diff --name-only origin/main)
+          echo "::set-output name=changed_files::$changed_files"
 
       - name: Update JIRA Custom Field
-        if: ${{ steps.compare-branches.outputs.CHANGED_FILES != '' }}
+        if: steps.get_changes.outputs.changed_files != ''
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
@@ -49,7 +36,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           
           # JIRA API token or password
-          jiraToken=${{ secrets.JIRA_API }}
+          jiraToken=${{secrets.JIRA_API}}
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
