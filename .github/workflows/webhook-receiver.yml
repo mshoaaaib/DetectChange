@@ -17,7 +17,7 @@ jobs:
       - name: Get branch names
         run: |
           MAIN_BRANCH="main"
-          CURRENT_BRANCH="2"
+          CURRENT_BRANCH="test"
           echo "MAIN_BRANCH=${MAIN_BRANCH}" >> $GITHUB_ENV
           echo "CURRENT_BRANCH=${CURRENT_BRANCH}" >> $GITHUB_ENV
 
