@@ -30,7 +30,7 @@ jobs:
         id: compare-branches
         run: |
           git checkout $CURRENT_BRANCH
-          CHANGED_FILES=$(git diff $MAIN_BRANCH)
+          CHANGED_FILES=$(git diff HEAD)
           echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
 
       - name: Update JIRA Custom Field
