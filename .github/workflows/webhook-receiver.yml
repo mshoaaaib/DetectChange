@@ -13,15 +13,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Get changed files
-        id: get_changes
-        run: |
-          git fetch origin main
-          changed_files=$(git diff --name-only origin/main)
-          echo "::set-output name=changed_files::$changed_files"
+      - name: Check for changes in change.js
+        id: check-changes
+        run: echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})"
 
       - name: Update JIRA Custom Field
-        if: steps.get_changes.outputs.changed_files != ''
+        if: steps.check-changes.outputs.changed == 'change.js'
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
@@ -36,7 +33,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           
           # JIRA API token or password
-          jiraToken=${{secrets.JIRA_API}}
+          jiraToken=${{ secrets.JIRA_API }}
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
