@@ -13,12 +13,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Check for changes in change.js
-        id: check-changes
-        run: echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})"
-
       - name: Update JIRA Custom Field
-        if: steps.check-changes.outputs.changed == 'change.js'
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
