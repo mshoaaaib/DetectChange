@@ -1,6 +1,9 @@
 name: JIRA Issue Transition
 
 on:
+  pull_request:
+    paths:
+      - 'change.js'
   repository_dispatch:
     types:
       - jira_issue_transition
@@ -13,7 +16,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Check for differences in change.js
+        id: check-diff
+        run: |
+          git fetch origin main:main
+          git diff --quiet main 1 -- change.js || echo "::set-output name=has_diff::true"
+
       - name: Update JIRA Custom Field
+        if: steps.check-diff.outputs.has_diff == 'true'
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
