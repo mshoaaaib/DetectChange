@@ -20,7 +20,7 @@ jobs:
         id: check-diff
         run: |
           git fetch origin
-          git diff --quiet origin/main origin/1 -- change.js || echo "::set-output name=has_diff::true"
+          git diff --quiet origin/main origin/${{ github.event.client_payload.issueKey }} -- change.js || echo "::set-output name=has_diff::true"
 
       - name: Update JIRA Custom Field
         if: steps.check-diff.outputs.has_diff == 'true'
