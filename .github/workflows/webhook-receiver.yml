@@ -48,7 +48,7 @@ jobs:
             -d '{
               "fields": {
               # Replace "tested" with Custom message Required
-                "'${customFieldId}'": "tested"
+                "${customFieldId}": "tested"
               }
             }' \
             "${jiraUrl}"
