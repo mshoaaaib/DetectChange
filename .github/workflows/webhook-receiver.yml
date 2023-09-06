@@ -48,7 +48,7 @@ jobs:
             -d '{
               "fields": {
   
-                "${customFieldId}": "tested"
+                "'${customFieldId}'": "tested"
               }
             }' \
             "${jiraUrl}"
