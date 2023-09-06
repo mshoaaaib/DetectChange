@@ -47,7 +47,7 @@ jobs:
             -u "${jiraUsername}:${jiraToken}" \
             -d '{
               "fields": {
-              # Replace "tested" with Custom message Required
+  
                 "${customFieldId}": "tested"
               }
             }' \
