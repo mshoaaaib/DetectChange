@@ -18,10 +18,10 @@ jobs:
         run: |
           git fetch origin
           # Replace main with MAIN BRANCH
-          # Check for changes in the /server/models folder
-          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' > changed_files.txt
+          # Check for changes in the /server/models folder and ItemDefinition.ts file
+          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_files.txt
           echo "::set-output name=changed_files::$(cat changed_files.txt)"
-      
+
       - name: Update JIRA Custom Field
         if: steps.list-files.outputs.changed_files != ''
         run: |
@@ -38,7 +38,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           
           # JIRA API token or password
-          jiraToken=${{ secrets.JIRA_API }}
+          jiraToken=${{ secrets.JIRA_API}}
           
           # Update the custom field using JIRA REST API
           curl -X PUT \
@@ -46,7 +46,7 @@ jobs:
             -u "${jiraUsername}:${jiraToken}" \
             -d '{
               "fields": {
-                "'${customFieldId}'": "tested"
+                "'${customFieldId}'": "Schema Change Detected"
               }
             }' \
             "${jiraUrl}"
