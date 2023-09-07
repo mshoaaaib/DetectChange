@@ -65,7 +65,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "customfield_10044": "Schema Change detected"
+                  "customfield_10045": "Schema Change detected"
                 }
               }' \
               "${jiraUrl}"
