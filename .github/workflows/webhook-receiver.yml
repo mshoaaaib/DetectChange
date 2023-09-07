@@ -51,7 +51,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "'${customFieldIdAPI}'": "API Change detected"
+                  "customfield_10044": "API Change detected"
                 }
               }' \
               "${jiraUrl}"
@@ -65,7 +65,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "'${customFieldSchema}'": "Schema Change detected"
+                  "customfield_10044": "Schema Change detected"
                 }
               }' \
               "${jiraUrl}"
