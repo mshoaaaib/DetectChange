@@ -1,9 +1,6 @@
 name: JIRA Issue Transition
 
 on:
-  pull_request:
-    paths:
-      - 'change.js'
   repository_dispatch:
     types:
       - jira_issue_transition
@@ -16,15 +13,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Check for differences in change.js
-        id: check-diff
+      - name: List modified files
+        id: list-files
         run: |
           git fetch origin
-          #Replace main with MAIN BRANCH
-          git diff --quiet origin/main origin/${{ github.event.client_payload.issueKey }} -- change.js || echo "::set-output name=has_diff::true"
-
+          # Replace main with MAIN BRANCH
+          # Check for changes in the /server/models folder
+          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' > changed_files.txt
+          echo "::set-output name=changed_files::$(cat changed_files.txt)"
+      
       - name: Update JIRA Custom Field
-        if: steps.check-diff.outputs.has_diff == 'true'
+        if: steps.list-files.outputs.changed_files != ''
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
@@ -47,7 +46,6 @@ jobs:
             -u "${jiraUsername}:${jiraToken}" \
             -d '{
               "fields": {
-  
                 "'${customFieldId}'": "tested"
               }
             }' \
