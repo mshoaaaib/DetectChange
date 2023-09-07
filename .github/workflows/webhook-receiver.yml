@@ -34,7 +34,8 @@ jobs:
           jiraUrl="https://gittest.atlassian.net/rest/api/3/issue/${issueKey}"
           
           # Your JIRA Custom Field ID
-          customFieldId="customfield_10090"
+          customFieldIdAPI="customfield_10044"
+          customFieldIdSchema="customfield_10045"
           
           # JIRA username (email)
           jiraUsername="shoaib40ce@gmail.com"
@@ -50,7 +51,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "'${customFieldId}'": "API Change detected"
+                  "'${customFieldIdAPI}'": "API Change detected"
                 }
               }' \
               "${jiraUrl}"
@@ -64,7 +65,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "'${customFieldId}'": "Schema Change detected"
+                  "'${customFieldSchema}'": "Schema Change detected"
                 }
               }' \
               "${jiraUrl}"
