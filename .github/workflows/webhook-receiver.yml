@@ -1,48 +1,43 @@
 name: Change Detection
-
+ 
 on:
   repository_dispatch:
     types:
       - jira_issue_transition
-
+ 
 jobs:
   process-jira-event:
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.client_payload.branchName }}
-
+        uses: actions/checkout@v3
+ 
       - name: List modified files
+        id: list-files
         run: |
           git fetch origin
           # Check for changes in the /server/database folder
-          git diff --name-only origin/pre-master origin/$branchName -- 'server/database/*' > changed_database_files.txt
+          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/database/*' > changed_database_files.txt
           # Check for changes in /server/models folder or ItemDefinition.ts
-          git diff --name-only origin/pre-master origin/$branchName -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
+          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
           echo "::set-output name=changed_database_files::$(cat changed_database_files.txt)"
           echo "::set-output name=changed_models_files::$(cat changed_models_files.txt)"
-
+ 
       - name: Update JIRA Custom Field
-         run: |
+        if: steps.list-files.outputs.changed_database_files != '' || steps.list-files.outputs.changed_models_files != ''
+        run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
-
           # Your JIRA API URL
-          jiraUrl="https://vultara.atlassian.net/rest/api/3/issue/${issueKey}"
-
+          jiraUrl="https://testjiragitautomation.atlassian.net/rest/api/3/issue/${issueKey}"
           # Your JIRA Custom Field ID
-          customFieldIdAPI="customfield_10090"
-          customFieldIdSchema="customfield_10091"
-
+          customFieldIdAPI="customfield_10037"
+          customFieldIdSchema="customfield_10037"
           # JIRA username (email)
           jiraUsername="muhammadshoaibajk@gmail.com"
-
           # JIRA API token or password
           jiraToken=${{ secrets.JIRA_API }}
-
           # Check if there are changes in /server/database
           if cat changed_database_files.txt | grep -qE 'server/database/'; then
             # Update custom field for API change
@@ -56,7 +51,6 @@ jobs:
               }' \
               "${jiraUrl}"
           fi
-
           # Check if there are changes in /server/models or ItemDefinition.ts
           if cat changed_models_files.txt | grep -qE 'server/models/|src/threatmodel/ItemDefinition.ts'; then
             # Update custom field for schema change
