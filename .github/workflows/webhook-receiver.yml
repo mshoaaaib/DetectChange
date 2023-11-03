@@ -51,7 +51,7 @@ jobs:
           jiraUsername="muhammadshoaibajk@gmail.com"
 
           # JIRA API token or password
-          jiraToken=${{ secrets.JIRA_API_TOKEN }}
+          jiraToken=${{ secrets.JIRA_API }}
 
           # Check if there are changes in /server/database
           if cat changed_database_files.txt | grep -qE 'server/database/'; then
@@ -61,7 +61,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "customfield_10090": "TRUE"
+                  "customfield_10037": "TRUE"
                 }
               }' \
               "${jiraUrl}"
@@ -75,7 +75,7 @@ jobs:
               -u "${jiraUsername}:${jiraToken}" \
               -d '{
                 "fields": {
-                  "customfield_10091": "TRUE"
+                  "customfield_10037": "TRUE"
                 }
               }' \
               "${jiraUrl}"
