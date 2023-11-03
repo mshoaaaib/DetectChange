@@ -15,17 +15,7 @@ jobs:
         with:
           ref: ${{ github.event.client_payload.branchName }}
 
-      - name: Check if branch exists
-        id: branch-exists
-        run: |
-          branchName="${{ github.event.client_payload.branchName }}"
-          if [[ -z "$(git rev-parse --verify --quiet $branchName)" ]]; then
-            echo "Branch does not exist. Ending the job."
-            exit 1
-          fi
-
       - name: List modified files
-        if: steps.branch-exists.outcome == 'success'
         run: |
           git fetch origin
           # Check for changes in the /server/database folder
@@ -36,8 +26,7 @@ jobs:
           echo "::set-output name=changed_models_files::$(cat changed_models_files.txt)"
 
       - name: Update JIRA Custom Field
-        if: steps.branch-exists.outcome == 'success' && (steps.list-files.outputs.changed_database_files != '' || steps.list-files.outputs.changed_models_files != '')
-        run: |
+         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
 
