@@ -11,21 +11,31 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.client_payload.branchName }}
+
+      - name: Check if branch exists
+        id: branch-exists
+        run: |
+          if [[ -z "$(git rev-parse --verify --quiet ${{ github.event.client_payload.branchName }})" ]]; then
+            echo "Branch does not exist. Ending the job."
+            exit 1
+          fi
 
       - name: List modified files
-        id: list-files
+        if: steps.branch-exists.outcome == 'success'
         run: |
           git fetch origin
           # Check for changes in the /server/database folder
-          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/database/*' > changed_database_files.txt
+          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.branchName }} -- 'server/database/*' > changed_database_files.txt
           # Check for changes in /server/models folder or ItemDefinition.ts
-          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
+          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.branchName }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
           echo "::set-output name=changed_database_files::$(cat changed_database_files.txt)"
           echo "::set-output name=changed_models_files::$(cat changed_models_files.txt)"
 
       - name: Update JIRA Custom Field
-        if: steps.list-files.outputs.changed_database_files != '' || steps.list-files.outputs.changed_models_files != ''
+        if: steps.branch-exists.outcome == 'success' && (steps.list-files.outputs.changed_database_files != '' || steps.list-files.outputs.changed_models_files != '')
         run: |
           # Extract issueKey from the payload
           issueKey=${{ github.event.client_payload.issueKey }}
@@ -38,7 +48,7 @@ jobs:
           customFieldIdSchema="customfield_10091"
 
           # JIRA username (email)
-          jiraUsername="muhammad.shoaib@vultara.com"
+          jiraUsername="muhammadshoaibajk@gmail.com"
 
           # JIRA API token or password
           jiraToken=${{ secrets.JIRA_API_TOKEN }}
