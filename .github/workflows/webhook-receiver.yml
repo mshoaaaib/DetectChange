@@ -18,9 +18,9 @@ jobs:
         run: |
           git fetch origin
           # Check for changes in the /server/database folder
-          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/database/*' > changed_database_files.txt
+          git diff --name-only origin/main origin/${{ github.event.client_payload.ticket_number }} -- 'server/database/*' > changed_database_files.txt
           # Check for changes in /server/models folder or ItemDefinition.ts
-          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
+          git diff --name-only origin/main origin/${{ github.event.client_payload.ticket_number }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
           echo "::set-output name=changed_database_files::$(cat changed_database_files.txt)"
           echo "::set-output name=changed_models_files::$(cat changed_models_files.txt)"
  
@@ -28,7 +28,7 @@ jobs:
         if: steps.list-files.outputs.changed_database_files != '' || steps.list-files.outputs.changed_models_files != ''
         run: |
           # Extract issueKey from the payload
-          issueKey=${{ github.event.client_payload.issueKey }}
+          issueKey=${{ github.event.client_payload.ticket_number }}
           # Your JIRA API URL
           jiraUrl="https://testjiragitautomation.atlassian.net/rest/api/3/issue/${issueKey}"
           # Your JIRA Custom Field ID
