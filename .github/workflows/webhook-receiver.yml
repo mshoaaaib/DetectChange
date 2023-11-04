@@ -18,9 +18,9 @@ jobs:
         run: |
           git fetch origin
           # Check for changes in the /server/database folder
-          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/database/*' > changed_database_files.txt
+          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/database/*' > changed_database_files.txt
           # Check for changes in /server/models folder or ItemDefinition.ts
-          git diff --name-only origin/pre-master origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
+          git diff --name-only origin/main origin/${{ github.event.client_payload.issueKey }} -- 'server/models/*' 'src/threatmodel/ItemDefinition.ts' > changed_models_files.txt
           echo "::set-output name=changed_database_files::$(cat changed_database_files.txt)"
           echo "::set-output name=changed_models_files::$(cat changed_models_files.txt)"
  
