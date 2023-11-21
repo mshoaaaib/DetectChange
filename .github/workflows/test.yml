@@ -28,15 +28,6 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           COMMENT_TEXT="Automation tests passed successfully!"
 
-          \
-              -H "Content-Type: application/json" \
-              -u "${jiraUsername}:${jiraToken}" \
-              -d '{
-                "fields": {
-                  "customfield_10090": "TRUE"
-                }
-              }' \
-          
           curl -X POST -H "Content-Type: application/json" -u "${jiraUsername}:${jiraToken}" \
              -d '{
             "body": "'"$COMMENT_TEXT"'"
