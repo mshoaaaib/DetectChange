@@ -1,0 +1,17 @@
+name: Testing Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dummy-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Dummy Step
+        run: echo "Dummy step executed successfully"
