@@ -2,7 +2,7 @@ name: Comment on Jira Ticket
 
 on:
   workflow_run:
-    workflows: "testing.yml"
+    workflows: ["testing.yml"]
     types:
       - completed
 
