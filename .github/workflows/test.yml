@@ -28,7 +28,7 @@ jobs:
           jiraUsername="shoaib40ce@gmail.com"
           COMMENT_TEXT="Automation tests passed successfully!"
 
-          curl -X POST -H "Content-Type: application/json" -u "${jiraUsername}:${jiraToken}" \
+          curl -X POST -H "Content-Type: application/json" -u "${jiraUsername}:${API_TOKEN}" \
              -d '{
             "body": "'"$COMMENT_TEXT"'"
           }' $JIRA_URL
@@ -37,4 +37,3 @@ jobs:
         if: github.event.workflow_run.conclusion != 'success'
         run: |
           echo "Automation tests did not pass. No comment will be added to Jira."
-
