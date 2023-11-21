@@ -1,0 +1,20 @@
+name: Dummy Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dummy-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Git repository
+      uses: actions/checkout@v2
+
+    - name: Dummy Step
+      run: echo "This is a dummy step. Workflow always passes."
+
+    - name: Final Step
+      run: echo "Workflow passed successfully!"
